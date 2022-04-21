@@ -13,13 +13,13 @@ app.get('/',(req,Res) => {
    Res.send('Hello');
 })
 app.post('/post', async (req,res) => {
-   if(req.files === null) res.send('error occucured');
+   if(req.files === null) res.send('Server got no PDF');
       const pdf = req.files.PDF;
       console.log(pdf);
       const result = await pdfParse(pdf);
       const words = result.text.split(" ");
       console.log(result);
-      res.send(words);
+      res.json(words);
       
 })
 
