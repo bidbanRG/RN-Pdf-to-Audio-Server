@@ -3,7 +3,7 @@ const  cors = require('cors');
 const fileUplaod = require('express-fileupload');
 const pdfParse = require('pdf-parse'); 
 
-const hummus = require('hummus');
+
 const app = express();
 const PORT = process.env.PORT || 9000;
 app.use(cors());
@@ -47,7 +47,7 @@ app.post('/post/:page', async (req,res) => {
      
          
         for(let i = 0;i < words.length; i++)
-         words[i] = words[i].replace(/(\r\n|\n|\r|\u|"")/gm,'');
+         words[i] = words[i].replace(/(\r\n|\n|\r|"")/gm,'');
           
           words = words.filter(function(value, index){ 
            return value !== ""
