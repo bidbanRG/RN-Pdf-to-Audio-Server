@@ -22,10 +22,12 @@ app.get('/',(req,res) => {
 })
 
 
-app.post('/post', async (req,res) => {
+app.post('/post/:page', async (req,res) => {
    if(req.files === null) res.send('Server got no PDF');
       const pdf = req.files.PDF;
-      const pagenumber = pdf.page;
+      const pagenumber =  parseInt(req.params['page']);
+     
+    
 
    let result = await pdfParse(pdf,{max:1});
    const pages = result.numpages;
@@ -34,18 +36,18 @@ app.post('/post', async (req,res) => {
     
    
 
-    const fun = async (pagenumber) => {
+    const fun = async (page) => {
 
-      if(pagenumber === 0) return [];  
+      if(page === 0) return [];  
          
-         let result = await pdfParse(pdf,{max:pagenumber});
+         let result = await pdfParse(pdf,{max:page});
           
          let words = result.text.split(" ");
-         // words = words.splice(last,last + words.length);
+        
      
          
         for(let i = 0;i < words.length; i++)
-         words[i] = words[i].replace(/(\r\n|\n|\r|"")/gm,'');
+         words[i] = words[i].replace(/(\r\n|\n|\r|\u|"")/gm,'');
           
           words = words.filter(function(value, index){ 
            return value !== ""
@@ -58,9 +60,9 @@ app.post('/post', async (req,res) => {
    
    let arr1 = await fun(pagenumber - 1);
    let arr2 = await fun(pagenumber);        
- 
- console.log(arr2);
+   
    const WORDS =  arr2.slice(arr1.length); 
+ 
 
    res.json(WORDS);
 
