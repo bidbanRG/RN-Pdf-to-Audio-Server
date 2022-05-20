@@ -32,7 +32,7 @@ app.post('/post/:page', async (req,res) => {
    let result = await pdfParse(pdf,{max:1});
    const pages = result.numpages;
 
-    
+  if(pages < pagenumber) res.send('NOPAGES');    
     
    
 
@@ -42,12 +42,14 @@ app.post('/post/:page', async (req,res) => {
          
          let result = await pdfParse(pdf,{max:page});
           
-         let words = result.text.split(" ");
         
-     
+         let words = result.text.split(" ");
+      
+        for(let i = 0;i < words.length; i++){
+         words[i] = words[i].replace(/(\r\n|\n|\r)/gm,'');}
          
-        for(let i = 0;i < words.length; i++)
-         words[i] = words[i].replace(/(\r\n|\n|\r|"")/gm,'');
+
+         
           
           words = words.filter(function(value, index){ 
            return value !== ""
@@ -59,11 +61,12 @@ app.post('/post/:page', async (req,res) => {
 
    
    let arr1 = await fun(pagenumber - 1);
+   
    let arr2 = await fun(pagenumber);        
    
    const WORDS =  arr2.slice(arr1.length); 
  
-
+   console.log(WORDS);
    res.json(WORDS);
 
        
