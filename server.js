@@ -23,7 +23,11 @@ app.get('/',(req,res) => {
 
 
 app.post('/post/:page', async (req,res) => {
-   if(req.files === null) res.send('Server got no PDF');
+
+   
+   if(!req.files) res.send('Server-got-no-PDF');
+
+    
       const pdf = req.files.PDF;
       const pagenumber =  parseInt(req.params['page']);
      
@@ -42,7 +46,8 @@ app.post('/post/:page', async (req,res) => {
          
          let result = await pdfParse(pdf,{max:page});
           
-        
+       
+       
          let words = result.text.split(" ");
       
         for(let i = 0;i < words.length; i++){
@@ -66,7 +71,7 @@ app.post('/post/:page', async (req,res) => {
    
    const WORDS =  arr2.slice(arr1.length); 
  
-   console.log(WORDS);
+   //console.log(WORDS);
    res.json(WORDS);
 
        

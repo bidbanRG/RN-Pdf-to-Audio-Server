@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dev" : "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
     "express": "^4.17.3",
     "express-fileupload": "^1.3.1",
     "hummus": "^1.0.110",
+    "nodemon": "^2.0.16",
     "pdf-parse": "^1.1.1"
   }
 }
