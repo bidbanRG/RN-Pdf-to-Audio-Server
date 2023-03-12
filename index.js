@@ -25,54 +25,72 @@ app.get('/',(req,res) => {
 app.post('/post/:page', async (req,res) => {
 
    
-   if(!req.files) res.send('Server-got-no-PDF');
-
+   if(!req.files || !req.files.PDF) {
+      
+      res.status(404).send({error:'No PDF Found'});
+      res.end();
+      return;
+}
     
       const pdf = req.files.PDF;
       const pagenumber =  parseInt(req.params['page']);
+
      
     
 
-   let result = await pdfParse(pdf,{max:1});
-   const pages = result.numpages;
 
-  if(pages < pagenumber) res.send('NOPAGES');    
-    
+  
+    let MAX_PAGES = null;
    
 
     const fun = async (page) => {
 
-      if(page === 0) return [];  
+      if(page === 0) return "";  
          
          let result = await pdfParse(pdf,{max:page});
-          
+          MAX_PAGES = result.numpages;
        
        
-         let words = result.text.split(" ");
+         let words = result.text;
       
-        for(let i = 0;i < words.length; i++){
-         words[i] = words[i].replace(/(\r\n|\n|\r)/gm,'');}
+       
          
 
          
           
-          words = words.filter(function(value, index){ 
-           return value !== ""
-        });
+          words = words.replace(/(\r\n|\n|\r)/gm,'');
 
-         return words; 
+
+         return words;
          
      }
 
+   try{ 
+    
+     let [A,B] = await Promise.all([fun(pagenumber),fun(pagenumber - 1)]);
+      
+      if(MAX_PAGES && MAX_PAGES < pagenumber) {
+         res.status(400).send({error:'page number exceeded'});
+         res.end();
+         return
+      }
+    
+      res.json({body:A.slice(B.length)});
+     
+    
+    res.end();
+
+   }catch(e){
+
+      
+      res.status(404).send({error:e.message});
+      
+      res.end();
+   }
    
-   let arr1 = await fun(pagenumber - 1);
    
-   let arr2 = await fun(pagenumber);        
-   
-   const WORDS =  arr2.slice(arr1.length); 
- 
-   //console.log(WORDS);
-   res.json(WORDS);
+    
+
 
        
 })
