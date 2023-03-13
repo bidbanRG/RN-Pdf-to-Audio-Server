@@ -2,6 +2,7 @@ const  express =  require('express');
 const  cors = require('cors');
 const fileUplaod = require('express-fileupload');
 const pdfParse = require('pdf-parse'); 
+const fs = require('fs');
 
 
 const app = express();
@@ -33,6 +34,7 @@ app.post('/post/:page', async (req,res) => {
 }
     
       const pdf = req.files.PDF;
+
       const pagenumber =  parseInt(req.params['page']);
 
      
@@ -75,10 +77,22 @@ app.post('/post/:page', async (req,res) => {
          return
       }
     
-      res.json({body:A.slice(B.length)});
+      const text = A.slice(B.length);
+      fs.writeFileSync('text.txt',text);
+      const reader = fs.createReadStream('text.txt');
      
+         reader.on('open', () => {
+            reader.pipe(res);
+         });
+      
+
+      reader.on("end",() => res.end());
+     
+      reader.on("error",(e) => res.status(404).json({error:e.message}));
+       
+      
     
-    res.end();
+    
 
    }catch(e){
 
