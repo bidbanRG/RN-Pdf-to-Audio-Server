@@ -79,8 +79,8 @@ app.post('/post/:page', async (req,res) => {
    
       const text = A.slice(B.length);
       fs.writeFileSync('/tmp/text.txt',text);
-      const reader = fs.createWriteStream('/tmp/text.txt');
-      
+      const reader = fs.createReadStream('/tmp/text.txt');
+     
          reader.on('open', () => {
             reader.pipe(res);
          });
