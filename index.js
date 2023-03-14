@@ -61,7 +61,7 @@ app.post('/post/:page', async (req,res) => {
          
           
           words = words.replace(/(\r\n|\n|\r)/gm,'');
-
+          
 
          return words;
          
@@ -76,21 +76,23 @@ app.post('/post/:page', async (req,res) => {
          res.end();
          return
       }
-    
+   
       const text = A.slice(B.length);
-      fs.writeFileSync('text.txt',text);
-      const reader = fs.createReadStream('text.txt');
+
+      // fs.writeFileSync('text.txt',text);
+      // const reader = fs.createReadStream('text.txt');
      
-         reader.on('open', () => {
-            reader.pipe(res);
-         });
+      //    reader.on('open', () => {
+      //       reader.pipe(res);
+      //    });
       
 
-      reader.on("end",() => res.end());
+      // reader.on("end",() => res.end());
      
-      reader.on("error",(e) => res.status(404).json({error:e.message}));
+      // reader.on("error",(e) => res.status(404).json({error:e.message}));
        
-      
+      res.json({body:text});
+      res.on('error',(e) => res.json({error:e.message}));
     
     
 
