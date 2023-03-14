@@ -111,12 +111,3 @@ app.post('/post/:page', async (req,res) => {
 })
 
 app.listen(PORT,() => {console.log('server is working')})
-/*
-    ***********FORMAT FOR SENDING FILES**************
-   
-   const formData = new FormData();
-   formData.append('json_name', file);
-   const res = await axios.post('http://localhost:9000/post', formData)
-
-
-*/              
