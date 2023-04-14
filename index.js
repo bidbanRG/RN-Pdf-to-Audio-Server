@@ -42,7 +42,7 @@ app.post('/post/:page', upload.single('PDF') ,async (req,res) => {
 
     
       
-      const pdf_path = __dirname + '/pdfs/book'
+      const pdf_path = __dirname + '/pdfs/book.pdf'
       const pagenumber =  parseInt(req.params['page']);
       const option = {from: pagenumber, to: pagenumber};
 
