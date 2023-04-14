@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
       cb(null,'pdfs')
    },
    filename:(req,file,cb) => {
-      cb(null,'book')
+      cb(null, 'book')
    }
 
 })
