@@ -11,7 +11,7 @@ app.use(cors());
 
 const storage = multer.diskStorage({
    destination:(req,file,cb) => {
-       console.log(file);
+     
       cb(null,'pdfs')
    },
    filename:(req,file,cb) => {
