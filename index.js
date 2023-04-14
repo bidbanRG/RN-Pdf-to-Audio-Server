@@ -1,19 +1,26 @@
 const  express =  require('express');
 const  cors = require('cors');
-const fileUplaod = require('express-fileupload');
-const pdfParse = require('pdf-parse'); 
-const fs = require('fs');
+const pdfUtil = require('pdf-to-text');
+const multer = require('multer');
 
 
 const app = express();
 const PORT = process.env.PORT || 9000;
 app.use(cors());
 
-      
-app.use(fileUplaod());
-app.use(express.json());
 
+const storage = multer.diskStorage({
+   destination:(req,file,cb) => {
+       console.log(file);
+      cb(null,'pdfs')
+   },
+   filename:(req,file,cb) => {
+      cb(null,'book')
+   }
 
+})
+
+const upload = multer({storage:storage});
 
 
 
@@ -23,76 +30,38 @@ app.get('/',(req,res) => {
 })
 
 
-app.post('/post/:page', async (req,res) => {
+app.post('/post/:page', upload.single('PDF') ,async (req,res) => {
 
    
-   if(!req.files || !req.files.PDF) {
+//    if(!req.files || !req.files.PDF) {
       
-      res.status(404).send({error:'No PDF Found'});
-      res.end();
-      return;
-}
+//       res.status(404).send({error:'No PDF Found'});
+//       res.end();
+//       return;
+// }
     
-      const pdf = req.files.PDF;
-
+      
+      const pdf_path = __dirname + '/pdfs/book'
       const pagenumber =  parseInt(req.params['page']);
+      const option = {from: pagenumber, to: pagenumber};
 
-     
     
 
-
-  
-    let MAX_PAGES = null;
-   
-
-    const fun = async (page) => {
-
-      if(page === 0) return "";  
-         
-         let result = await pdfParse(pdf,{max:page});
-          MAX_PAGES = result.numpages;
-       
-       
-         let words = result.text;
-      
-       
-         
-
-         
           
-          words = words.replace(/(\r\n|\n|\r)/gm,'');
-
-
-         return words;
-         
-     }
-
-   try{ 
+try{ 
     
-     let [A,B] = await Promise.all([fun(pagenumber),fun(pagenumber - 1)]);
+ 
       
-      if(MAX_PAGES && MAX_PAGES < pagenumber) {
-         res.status(400).send({error:'page number exceeded'});
-         res.end();
-         return
-      }
-   
-      const text = A.slice(B.length);
-      // fs.writeFileSync('text.txt',text);
-      // const reader = fs.createReadStream('text.txt');
-     
-      //    reader.on('open', () => {
-      //       reader.pipe(res);
-      //    });
+  pdfUtil.pdfToText(pdf_path, option, function(err, data) {
+     if (err) {
+       res.status(400).send({error:err});
+     }
+     else res.json({body:data.replace(/(\r\n|\n|\r|\f)/gm,'')});
       
-
-      // reader.on("end",() => res.end());
-     
-      // reader.on("error",(e) => res.status(404).json({error:e.message}));
-       
+ }); 
       
-      res.json({body:text});
       res.on('error',(e) => res.json({error:e.message}));
+    
     
 
    }catch(e){
@@ -111,3 +80,12 @@ app.post('/post/:page', async (req,res) => {
 })
 
 app.listen(PORT,() => {console.log('server is working')})
+/*
+    ***********FORMAT FOR SENDING FILES**************
+   
+   const formData = new FormData();
+   formData.append('json_name', file);
+   const res = await axios.post('http://localhost:9000/post', formData)
+
+
+*/              
