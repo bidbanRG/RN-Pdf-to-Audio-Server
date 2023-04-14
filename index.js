@@ -11,10 +11,11 @@ app.use(cors());
 
 const storage = multer.diskStorage({
    destination:(req,file,cb) => {
-     
+     console.log(file)
       cb(null,'pdfs')
    },
    filename:(req,file,cb) => {
+      console.log(file)
       cb(null, 'book')
    }
 
@@ -53,6 +54,7 @@ try{
  
       
   pdfUtil.pdfToText(pdf_path, option, function(err, data) {
+     console.log(data);
      if (err) {
        res.status(400).send({error:err});
      }
