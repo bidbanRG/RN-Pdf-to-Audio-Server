@@ -16,11 +16,11 @@ app.use(cors());
 // app.use(express.json());
 const storage = multer.diskStorage({
    destination:(req,file,cb) => {
-       console.log(file);
+       
       cb(null,'pdfs')
    },
    filename:(req,file,cb) => {
-      cb(null,'book')
+      cb(null,'book.pdf')
    }
 
 })
@@ -46,27 +46,19 @@ app.post('/post/:page', upload.single('PDF') ,async (req,res) => {
 // }
     
       
-      const pdf_path = __dirname + '/pdfs/book'
+      const pdf_path = __dirname + '/pdfs/book.pdf'
       const pagenumber =  parseInt(req.params['page']);
       const option = {from: pagenumber, to: pagenumber};
 
     
- //        words = words.replace(/(\r\n|\n|\r)/gm,'');
+
           
 try{ 
     
-  //  pdfUtil.info(pdf_path, function(err, info) {
-  //     if (err) {
-  //        console.log(err);
-  //     };
-  //    console.log(info);
-  //     if(info.pages < pagenumber)
-  //        { res.status(400).send({body:'page limit exceeded'});
-  //          return;
-  //        }
-  // });
+
       
   pdfUtil.pdfToText(pdf_path, option, function(err, data) {
+   console.log(data);
      if (err) {
        res.status(400).send({error:err});
      }
